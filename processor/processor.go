@@ -36,6 +36,7 @@ import (
 
 const (
 	objectRootMarker = "kubebuilder:object:root"
+	filedHideFromDoc = "hide_from_doc"
 )
 
 var ignoredCommentRegex = regexp.MustCompile(`\s*^(?i:\+|copyright)`)
@@ -480,14 +481,16 @@ func (p *processor) addReference(parent *types.Type, child *types.Type) {
 
 func mkRegistry() (*markers.Registry, error) {
 	registry := &markers.Registry{}
-	err := registry.Define(objectRootMarker, markers.DescribesType, true)
-	if err != nil {
+	if err := registry.Define(objectRootMarker, markers.DescribesType, true); err != nil {
+		return nil, err
+	}
+
+	if err := registry.Define(filedHideFromDoc, markers.DescribesField, true); err != nil {
 		return nil, err
 	}
 
 	for _, marker := range crdmarkers.AllDefinitions {
-		err = registry.Register(marker.Definition)
-		if err != nil {
+		if err := registry.Register(marker.Definition); err != nil {
 			return nil, err
 		}
 	}
