@@ -35,7 +35,8 @@ type Embedded struct {
 }
 type Embedded1 struct {
 	Embedded2 `json:",inline"`
-	E         string `json:"e,omitempty"`
+	// +hidefromdoc
+	E string `json:"e,omitempty"`
 }
 type Embedded2 struct {
 	B         string `json:"b,omitempty"`
